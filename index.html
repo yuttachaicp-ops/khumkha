@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f0f0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="คุ้มค่า">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>คุ้มค่า</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&family=Kanit:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0f;
+  --surface: #1c1c1c;
+  --surface2: #252525;
+  --border: rgba(255,255,255,0.09);
+  --text: #f0f0f0;
+  --muted: #777;
+  --g: #4ade80; --g-bg: rgba(74,222,128,0.13); --g-b: rgba(74,222,128,0.35);
+  --y: #facc15; --y-bg: rgba(250,204,21,0.13); --y-b: rgba(250,204,21,0.35);
+  --o: #fb923c; --o-bg: rgba(251,146,60,0.13); --o-b: rgba(251,146,60,0.35);
+  --r: #f87171; --r-bg: rgba(248,113,113,0.13); --r-b: rgba(248,113,113,0.35);
+  --radius: 20px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif;overflow:hidden}
+
+/* ===== FULL SCREEN MODE ===== */
+#app-full {
+  height:100dvh; display:flex; flex-direction:column;
+  padding: env(safe-area-inset-top,16px) 16px env(safe-area-inset-bottom,16px);
+}
+.top-bar { display:flex; align-items:center; gap:10px; padding:12px 0 16px; }
+.dot { width:9px; height:9px; border-radius:50%; background:var(--g); box-shadow:0 0 10px var(--g); animation:blink 2s infinite; }
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.app-name { font-family:'Kanit',sans-serif; font-size:19px; font-weight:700; }
+.mini-btn { margin-left:auto; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:6px 12px; font-size:12px; color:var(--muted); cursor:pointer; display:flex; align-items:center; gap:5px; }
+.mini-btn:active{transform:scale(0.96)}
+
+.inputs { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.icard { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; }
+.icard label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; display:block; margin-bottom:6px; }
+.icard input { width:100%; font-size:34px; font-weight:700; font-family:'Kanit',sans-serif; background:transparent; border:none; outline:none; color:var(--text); -moz-appearance:textfield; }
+.icard input::-webkit-inner-spin-button,.icard input::-webkit-outer-spin-button{-webkit-appearance:none}
+.icard .u { font-size:11px; color:var(--muted); margin-top:1px; }
+
+.res {
+  border-radius:22px; padding:20px 22px; border:1px solid var(--border);
+  background:var(--surface); transition:all .25s; flex:1; display:flex; flex-direction:column; justify-content:center;
+  margin-bottom:12px; position:relative; overflow:hidden;
+}
+.res.g{background:var(--g-bg);border-color:var(--g-b)}
+.res.y{background:var(--y-bg);border-color:var(--y-b)}
+.res.o{background:var(--o-bg);border-color:var(--o-b)}
+.res.r{background:var(--r-bg);border-color:var(--r-b)}
+.res-row{display:flex;align-items:baseline;gap:6px;margin-bottom:3px}
+.rate-big{font-size:52px;font-weight:700;font-family:'Kanit',sans-serif;line-height:1;transition:color .25s}
+.rate-u{font-size:15px;color:var(--muted)}
+.eq{font-size:13px;color:var(--muted);margin-bottom:14px}
+.verdict{font-size:22px;font-weight:700;font-family:'Kanit',sans-serif;transition:color .25s;margin-bottom:3px}
+.vs{font-size:13px;color:var(--muted)}
+.g .rate-big,.g .verdict{color:var(--g)}
+.y .rate-big,.y .verdict{color:var(--y)}
+.o .rate-big,.o .verdict{color:var(--o)}
+.r .rate-big,.r .verdict{color:var(--r)}
+
+.tiers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.tier{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center}
+.tdot{width:7px;height:7px;border-radius:50%;margin:0 auto 7px}
+.tg{background:var(--g)}.ty{background:var(--y)}.tr{background:var(--r)}
+.tr-rate{font-size:13px;font-weight:700;font-family:'Kanit',sans-serif;margin-bottom:1px}
+.tr-lbl{font-size:11px;color:var(--muted)}
+
+.presets-wrap{overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.presets-wrap::-webkit-scrollbar{display:none}
+.presets{display:flex;gap:8px;width:max-content}
+.preset{background:var(--surface2);border:1px solid var(--border);border-radius:30px;padding:8px 15px;font-size:13px;font-family:'Sarabun',sans-serif;color:var(--text);cursor:pointer;white-space:nowrap;transition:transform .1s}
+.preset:active{transform:scale(0.94)}
+
+/* ===== POPUP MINI MODE ===== */
+#app-popup {
+  display:none;
+  position:fixed; bottom:20px; right:16px;
+  width:310px;
+  background:var(--bg);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:24px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.7);
+  z-index:9999;
+  overflow:hidden;
+  animation: popIn .2s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn{from{transform:scale(0.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.popup-header{
+  background:var(--surface); padding:12px 14px 10px;
+  display:flex; align-items:center; gap:8px;
+  border-bottom:1px solid var(--border); cursor:grab;
+}
+.popup-header:active{cursor:grabbing}
+.p-dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--g)}
+.p-title{font-family:'Kanit',sans-serif;font-size:14px;font-weight:700;}
+.p-close{margin-left:auto;width:24px;height:24px;border-radius:50%;background:var(--surface2);border:none;color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.p-close:active{transform:scale(0.9)}
+.popup-body{padding:14px}
+.p-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.p-icard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px}
+.p-icard label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+.p-icard input{width:100%;font-size:26px;font-weight:700;font-family:'Kanit',sans-serif;background:transparent;border:none;outline:none;color:var(--text);-moz-appearance:textfield}
+.p-icard input::-webkit-inner-spin-button,.p-icard input::-webkit-outer-spin-button{-webkit-appearance:none}
+.p-icard .pu{font-size:10px;color:var(--muted)}
+.p-res{border-radius:14px;padding:12px 14px;border:1px solid var(--border);background:var(--surface);transition:all .2s;margin-bottom:10px}
+.p-res.g{background:var(--g-bg);border-color:var(--g-b)}
+.p-res.y{background:var(--y-bg);border-color:var(--y-b)}
+.p-res.o{background:var(--o-bg);border-color:var(--o-b)}
+.p-res.r{background:var(--r-bg);border-color:var(--r-b)}
+.p-rate-row{display:flex;align-items:baseline;gap:5px;margin-bottom:2px}
+.p-rate{font-size:32px;font-weight:700;font-family:'Kanit',sans-serif;transition:color .2s}
+.p-ru{font-size:13px;color:var(--muted)}
+.p-verdict{font-size:15px;font-weight:700;font-family:'Kanit',sans-serif;margin-bottom:1px;transition:color .2s}
+.p-vs{font-size:11px;color:var(--muted)}
+.p-res.g .p-rate,.p-res.g .p-verdict{color:var(--g)}
+.p-res.y .p-rate,.p-res.y .p-verdict{color:var(--y)}
+.p-res.o .p-rate,.p-res.o .p-verdict{color:var(--o)}
+.p-res.r .p-rate,.p-res.r .p-verdict{color:var(--r)}
+.p-presets{display:flex;gap:6px;flex-wrap:wrap}
+.p-preset{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 10px;font-size:11px;color:var(--text);cursor:pointer}
+.p-preset:active{transform:scale(0.94)}
+
+/* FAB (ปุ่มลอย) */
+#fab {
+  display:none;
+  position:fixed;bottom:24px;right:18px;
+  width:56px;height:56px;border-radius:50%;
+  background:var(--g);box-shadow:0 4px 20px rgba(74,222,128,0.45);
+  border:none;cursor:pointer;z-index:9998;
+  font-size:24px;align-items:center;justify-content:center;
+  animation:fabIn .3s cubic-bezier(.34,1.56,.64,1);
+  transition:transform .15s;
+}
+@keyframes fabIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+#fab:active{transform:scale(0.9)}
+</style>
+</head>
+<body>
+
+<!-- ===== FULL APP ===== -->
+<div id="app-full">
+  <div class="top-bar">
+    <div class="dot"></div>
+    <div class="app-name">คุ้มค่า</div>
+    <button class="mini-btn" onclick="switchToPopup()">
+      <span>⊡</span> โหมด popup
+    </button>
+  </div>
+
+  <div class="inputs">
+    <div class="icard">
+      <label>เงินที่ได้</label>
+      <input type="number" id="money" value="50" inputmode="decimal"/>
+      <div class="u">บาท</div>
+    </div>
+    <div class="icard">
+      <label>ระยะทาง</label>
+      <input type="number" id="dist" value="4" step="0.1" inputmode="decimal"/>
+      <div class="u">กิโลเมตร</div>
+    </div>
+  </div>
+
+  <div class="res" id="res">
+    <div class="res-row">
+      <span class="rate-big" id="rn">12.5</span>
+      <span class="rate-u">บาท/กม.</span>
+    </div>
+    <div class="eq" id="eq">50 ÷ 4 กม.</div>
+    <div class="verdict" id="vt">กดรับทันที!</div>
+    <div class="vs" id="vs">งานดีมาก ไม่ต้องลังเล</div>
+  </div>
+
+  <div class="tiers">
+    <div class="tier"><div class="tdot tg"></div><div class="tr-rate">10+</div><div class="tr-lbl">กดเลย</div></div>
+    <div class="tier"><div class="tdot ty"></div><div class="tr-rate">7–10</div><div class="tr-lbl">รับได้</div></div>
+    <div class="tier"><div class="tdot tr"></div><div class="tr-rate">&lt;7</div><div class="tr-lbl">เลี่ยง</div></div>
+  </div>
+
+  <div class="presets-wrap">
+    <div class="presets">
+      <button class="preset" onclick="sv(40,5)">40฿/5กม.</button>
+      <button class="preset" onclick="sv(50,4)">50฿/4กม.</button>
+      <button class="preset" onclick="sv(60,7)">60฿/7กม.</button>
+      <button class="preset" onclick="sv(35,7)">35฿/7กม.</button>
+      <button class="preset" onclick="sv(80,10)">80฿/10กม.</button>
+      <button class="preset" onclick="sv(100,12)">100฿/12กม.</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POPUP ===== -->
+<div id="app-popup">
+  <div class="popup-header" id="popup-drag">
+    <div class="p-dot"></div>
+    <div class="p-title">คุ้มค่า</div>
+    <button class="p-close" onclick="closePopup()">✕</button>
+  </div>
+  <div class="popup-body">
+    <div class="p-inputs">
+      <div class="p-icard">
+        <label>เงิน</label>
+        <input type="number" id="p-money" value="50" inputmode="decimal"/>
+        <div class="pu">บาท</div>
+      </div>
+      <div class="p-icard">
+        <label>ระยะ</label>
+        <input type="number" id="p-dist" value="4" step="0.1" inputmode="decimal"/>
+        <div class="pu">กม.</div>
+      </div>
+    </div>
+    <div class="p-res" id="p-res">
+      <div class="p-rate-row">
+        <span class="p-rate" id="p-rn">12.5</span>
+        <span class="p-ru">บาท/กม.</span>
+      </div>
+      <div class="p-verdict" id="p-vt">กดรับทันที!</div>
+      <div class="p-vs" id="p-vs">งานดีมาก</div>
+    </div>
+    <div class="p-presets">
+      <button class="p-preset" onclick="psv(40,5)">40/5</button>
+      <button class="p-preset" onclick="psv(50,4)">50/4</button>
+      <button class="p-preset" onclick="psv(60,7)">60/7</button>
+      <button class="p-preset" onclick="psv(35,7)">35/7</button>
+      <button class="p-preset" onclick="psv(80,10)">80/10</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button id="fab" onclick="openPopup()">฿</button>
+
+<script>
+// ===== FULL APP CALC =====
+const M=()=>parseFloat(document.getElementById('money').value)||0;
+const D=()=>parseFloat(document.getElementById('dist').value)||1;
+
+function getClass(rate){
+  if(rate>=10)return'g';
+  if(rate>=7)return'y';
+  if(rate>=5)return'o';
+  return'r';
+}
+function getVerdict(rate){
+  if(rate>=10)return['กดรับทันที!','งานดีมาก ไม่ต้องลังเล'];
+  if(rate>=7)return['รับได้ วิ่งได้เรื่อยๆ','ดูระยะด้วย ไม่ควรเกิน 8 กม.'];
+  if(rate>=5)return['เสี่ยง ต้องคิดก่อน','ต่ำไป ถ้าไม่มีงานอื่นค่อยรับ'];
+  return['ไม่ควรรับเลย','ขาดทุน ไม่คุ้มน้ำมัน'];
+}
+
+function calc(){
+  const m=M(),d=D(),rate=m/d;
+  const r=(Math.round(rate*10)/10).toFixed(1);
+  document.getElementById('rn').textContent=r;
+  document.getElementById('eq').textContent=m+' ÷ '+d+' กม.';
+  const [v,s]=getVerdict(rate);
+  document.getElementById('vt').textContent=v;
+  document.getElementById('vs').textContent=s;
+  const box=document.getElementById('res');
+  box.className='res '+getClass(rate);
+}
+
+function sv(m,d){
+  document.getElementById('money').value=m;
+  document.getElementById('dist').value=d;
+  calc();
+}
+
+document.getElementById('money').addEventListener('input',calc);
+document.getElementById('dist').addEventListener('input',calc);
+calc();
+
+// ===== POPUP CALC =====
+const PM=()=>parseFloat(document.getElementById('p-money').value)||0;
+const PD=()=>parseFloat(document.getElementById('p-dist').value)||1;
+
+function pcalc(){
+  const m=PM(),d=PD(),rate=m/d;
+  const r=(Math.round(rate*10)/10).toFixed(1);
+  document.getElementById('p-rn').textContent=r;
+  const [v,s]=getVerdict(rate);
+  document.getElementById('p-vt').textContent=v;
+  document.getElementById('p-vs').textContent=s;
+  const box=document.getElementById('p-res');
+  box.className='p-res '+getClass(rate);
+}
+
+function psv(m,d){
+  document.getElementById('p-money').value=m;
+  document.getElementById('p-dist').value=d;
+  pcalc();
+}
+
+document.getElementById('p-money').addEventListener('input',pcalc);
+document.getElementById('p-dist').addEventListener('input',pcalc);
+pcalc();
+
+// ===== POPUP SWITCH =====
+function switchToPopup(){
+  document.getElementById('app-full').style.display='none';
+  document.getElementById('fab').style.display='flex';
+  openPopup();
+  localStorage.setItem('mode','popup');
+}
+
+function openPopup(){
+  const p=document.getElementById('app-popup');
+  p.style.display='block';
+  document.getElementById('fab').style.display='none';
+  pcalc();
+}
+
+function closePopup(){
+  document.getElementById('app-popup').style.display='none';
+  document.getElementById('fab').style.display='flex';
+}
+
+// ===== DRAGGABLE POPUP =====
+const popup=document.getElementById('app-popup');
+const dragHandle=document.getElementById('popup-drag');
+let dragging=false,startX,startY,origLeft,origBottom;
+
+function getPopupPos(){
+  const rect=popup.getBoundingClientRect();
+  return{left:rect.left,top:rect.top};
+}
+
+dragHandle.addEventListener('touchstart',e=>{
+  const t=e.touches[0];
+  dragging=true;
+  startX=t.clientX;startY=t.clientY;
+  const pos=getPopupPos();
+  origLeft=pos.left;origTop=pos.top;
+  popup.style.right='auto';popup.style.bottom='auto';
+  popup.style.left=origLeft+'px';popup.style.top=origTop+'px';
+},{passive:true});
+
+window.addEventListener('touchmove',e=>{
+  if(!dragging)return;
+  const t=e.touches[0];
+  const dx=t.clientX-startX,dy=t.clientY-startY;
+  const newLeft=origLeft+dx,newTop=origTop+dy;
+  popup.style.left=Math.max(0,Math.min(window.innerWidth-310,newLeft))+'px';
+  popup.style.top=Math.max(0,Math.min(window.innerHeight-400,newTop))+'px';
+},{passive:true});
+
+window.addEventListener('touchend',()=>{dragging=false});
+
+// Restore mode
+if(localStorage.getItem('mode')==='popup'){
+  switchToPopup();
+}
+
+// ===== PWA =====
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  // auto-prompt after 2s
+  setTimeout(()=>{
+    if(deferredPrompt){deferredPrompt.prompt();}
+  },2000);
+});
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>
